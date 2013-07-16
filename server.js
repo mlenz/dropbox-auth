@@ -45,19 +45,19 @@ function start() {
     // If cookied, calls dbox.account with the access token from Mongo
     // to display a welcome message. Otherwise, starts the login process.
     app.get(/\//, function(req, res) {
-    	if (req.cookies.uid) {
-			dboxClient(req.cookies.uid, function(client) {
-				client.account(function(status, reply) {
-					if (status == 200) {
-						res.write("Welcome " + reply.display_name);
-						res.end();
-					}
-				});
-			});
-		} else {
-			requestToken(res);
-		}
-	});
+        if (req.cookies.uid) {
+            dboxClient(req.cookies.uid, function(client) {
+                client.account(function(status, reply) {
+                    if (status == 200) {
+                        res.write("Welcome " + reply.display_name);
+                        res.end();
+                    }
+                });
+            });
+        } else {
+            requestToken(res);
+        }
+    });
     
     // Ask dropbox API for a req token, then forward user to dropbox.com to authorize it
     function requestToken(res) {
@@ -103,13 +103,13 @@ function start() {
     function dboxClient(uid, callback) {
         db.collection("user", function(err, collection) {
             collection.findOne({uid : uid},
-            	{fields : {oauth_token : 1, oauth_token_secret : 1, uid : 1}},
-            	function(err, item) {
-					var token = {};
-					token.oauth_token = item ? item.oauth_token : "";
-					token.oauth_token_secret = item ? item.oauth_token_secret : "";
-					callback(dbox.client(token));
-				});
+                {fields : {oauth_token : 1, oauth_token_secret : 1, uid : 1}},
+                function(err, item) {
+                    var token = {};
+                    token.oauth_token = item ? item.oauth_token : "";
+                    token.oauth_token_secret = item ? item.oauth_token_secret : "";
+                    callback(dbox.client(token));
+                });
         });
     }
     
